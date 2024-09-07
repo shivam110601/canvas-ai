@@ -6,6 +6,9 @@ import base64
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+import matplotlib.pyplot as plt
+from sympy import symbols, Eq, solve, sympify
+from sympy.plotting import plot
 
 app = Flask(__name__)
 
