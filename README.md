@@ -1,1 +1,3 @@
-Canvas writing app with Gemini assist.
+Canvas writing app with Gemini.
+
+![img.png](img.png)
