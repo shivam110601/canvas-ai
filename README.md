@@ -1,3 +1,5 @@
-Canvas writing app with Gemini.
+Canvas writing app with Gemini using KonvaJS.
 
-![img.png](img.png)
+![initial.png](initial.png)
+
+![final.png](final.png)
