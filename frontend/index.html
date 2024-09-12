@@ -3,23 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Canvas Math Solver</title>
+    <title>AI Canvas with Gemini</title>
+    <script src="https://unpkg.com/konva@9.3.15/konva.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <div class="top-buttons">
-            <button id="clear-btn">Clear Canvas</button>
-            <button id="save-btn">Save & Solve</button>
+        <div class="canvas-area">
+            <div id="canvas-container"></div>
+            <div class="tools">
+                <select id="tool" class="tool-button">
+                    <option value="brush">🖌️</option>
+                    <option value="eraser">🧽</option>
+                </select>
+                <input type="color" id="color-picker" class="color-picker" value="#ffffff">
+                <input type="range" id="size-slider" class="size-slider" min="1" max="50" value="5">
+            </div>
         </div>
-
-        <div class="canvas-output-wrapper">
-            <canvas id="canvas" width="400" height="400"></canvas>
-            <div id="output-box">Math output will be displayed here</div>
+        <div class="sidebar">
+            <div class="output-section">
+                <h4>Gemini Assist:</h4>
+                <div id="loading">Processing...</div>
+                <div id="gemini-output" class="output-content"></div>
+            </div>
+            <div class="output-section">
+                <h4>Plots:</h4>
+                <div id="plot-output" class="output-content"></div>
+            </div>
+            <button id="generate-button" style="width: 40px; height: 40px; border-radius: 50%; border: none; background-color: #007bff; color: white; font-size: 20px;">💎</button>
         </div>
     </div>
-
     <script src="app.js"></script>
 </body>
 </html>
