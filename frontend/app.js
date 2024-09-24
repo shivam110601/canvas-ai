@@ -1,4 +1,4 @@
-var width = window.innerWidth*0.8;
+var width = 1500;
 var height = 2000;
 
 var stage = new Konva.Stage({
@@ -18,6 +18,7 @@ var image = new Konva.Image({
     image: canvas,
     x: 0,
     y: 0,
+    shadowEnabled: 'true',
 });
 layer.add(image);
 
@@ -25,10 +26,6 @@ var context = canvas.getContext('2d');
 context.strokeStyle = '#f00000';  // Set default brush color
 context.lineJoin = 'round';
 context.lineWidth = 5;
-
-// Fill the canvas with the background color
-context.fillStyle = '#f0f0f0';
-context.fillRect(0, 0, canvas.width, canvas.height);
 
 var isPaint = false;
 var lastPointerPosition;
@@ -92,6 +89,9 @@ stage.on('mousedown touchstart', function (e) {
         var transform = stage.getAbsoluteTransform().copy();
         transform.invert();
         lastPointerPosition = transform.point(pos);
+
+        //=========== try Update the position display
+        updatePointerPosition(lastPointerPosition.x, lastPointerPosition.y);
     }
 });
 
@@ -99,6 +99,14 @@ stage.on('mouseup touchend', function () {
     isPaint = false;
     stage.draggable(false);  // Always disable dragging after mouse release
 });
+
+//=========== pointer position display
+// Add this function to update the position display
+function updatePointerPosition(x, y) {
+    var positionElement = document.getElementById('pointer-position');
+    positionElement.textContent = Math.round(x) + ', ' + Math.round(y);
+}
+//===========
 
 stage.on('mousemove touchmove', function (e) {
     if (!isPaint) {
@@ -129,26 +137,44 @@ stage.on('mousemove touchmove', function (e) {
     var localPos = transform.point(pos);
 
     context.beginPath();
-
     // Move to the last pointer position and draw a line to the current position
     context.moveTo(lastPointerPosition.x, lastPointerPosition.y);
     context.lineTo(localPos.x, localPos.y);
-
     context.closePath();
     context.stroke();
 
     // Update the last pointer position
     lastPointerPosition = localPos;
 
+    //=========== try Update the position display
+    updatePointerPosition(localPos.x, localPos.y);
+
     layer.batchDraw();
 });
 
+//=================== tools changed ================
+// Replace the toolSelect event listener with the following:
+var brushTool = document.getElementById('brush-tool');
+var eraserTool = document.getElementById('eraser-tool');
 
+function setActiveTool(activeTool) {
+    mode = activeTool;
+    brushTool.classList.toggle('active', activeTool === 'brush');
+    eraserTool.classList.toggle('active', activeTool === 'eraser');
+}
 
-var toolSelect = document.getElementById('tool');
-toolSelect.addEventListener('change', function () {
-    mode = toolSelect.value;
+brushTool.addEventListener('click', function() {
+    setActiveTool('brush');
 });
+
+eraserTool.addEventListener('click', function() {
+    setActiveTool('eraser');
+});
+
+// Initialize with brush as the active tool
+setActiveTool('brush');
+
+//====================================================
 
 var colorPicker = document.getElementById('color-picker');
 colorPicker.addEventListener('change', function () {
@@ -171,7 +197,18 @@ document.getElementById('generate-button').onclick = function() {
     plotOutputElement.innerHTML = '';
 
     // Get the canvas data as a base64-encoded string
-    var imageData = image.toDataURL('image/png');
+    var tempCanvas = document.createElement('canvas');
+    tempCanvas.width = stage.width();
+    tempCanvas.height = stage.height();
+    var tempContext = tempCanvas.getContext('2d');
+    // Fill the canvas with the background color
+    tempContext.fillStyle = '#f0f0f0';
+    tempContext.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Draw the background
+    tempContext.drawImage(canvas, 0, 0);
+
+    var imageData = tempCanvas.toDataURL('image/png');
 
     // Send the image data to the backend
     fetch('http://localhost:5000/generate', {
@@ -221,6 +258,7 @@ document.getElementById('generate-button').onclick = function() {
         } else {
             plotOutputElement.innerHTML = 'No equations to plot.';
         }
+
     })
     .catch((error) => {
         console.error('Error:', error);
