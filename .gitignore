@@ -1,4 +1,4 @@
-backend/.env/
+backend/.env
 venv/
 .idea/
 *.pyc
