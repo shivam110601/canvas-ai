@@ -211,7 +211,7 @@ document.getElementById('generate-button').onclick = function() {
     var imageData = tempCanvas.toDataURL('image/png');
 
     // Send the image data to the backend
-    fetch('http://localhost:5000/generate', {
+    fetch('http://localhost:8000/generate', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -240,7 +240,9 @@ document.getElementById('generate-button').onclick = function() {
             let outputHtml = '';
             data.solutions.forEach((solution, index) => {
                 outputHtml += `<strong>Question ${index + 1}:</strong> ${solution.question || 'N/A'}\n\n`;
-                outputHtml += `<strong>Explanation:</strong> ${solution.explanation || 'N/A'}\n\n`;
+                if (solution.explanation){
+                    outputHtml += `<strong>Explanation:</strong> ${solution.explanation || 'N/A'}\n\n`;
+                }
                 outputHtml += `<strong>Solution:</strong> ${solution.solution || 'N/A'}\n\n`;
                 if (solution.equations && Array.isArray(solution.equations) && solution.equations.length > 0) {
                     outputHtml += `<strong>Equations:</strong> ${solution.equations.join(', ')}\n\n`;
